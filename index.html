@@ -165,5 +165,16 @@
             `).join('');
         });
     </script>
+    <script>
+    // Manejo básico de rutas
+    if (window.location.hash === '#admin') {
+        const usuario = JSON.parse(sessionStorage.getItem('usuarioActual'));
+        if (usuario && usuario.rol === 'administrador') {
+            window.location.href = 'Admin/index.html';
+        } else {
+            window.location.href = 'Login/index.html';
+        }
+    }
+</script>
 </body>
 </html>
