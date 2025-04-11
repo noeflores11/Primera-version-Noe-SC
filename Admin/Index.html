@@ -67,7 +67,7 @@
     <header>
         <div class="logo">Tech Store - Admin</div>
         <div id="user-actions">
-            <a href="../Logout/logout.html" class="btn btn-back">Cerrar sesión</a>
+            <a href="#logout" class="btn btn-back">Cerrar sesión</a>
         </div>
     </header>
 
@@ -75,8 +75,8 @@
         <div class="admin-header">
             <h1>Panel de Administración</h1>
             <div class="admin-actions">
-                <a href="../NuevoProducto/index.html" class="btn btn-add">➕ Agregar Producto</a>
-                <a href="../index.html" class="btn btn-back">← Volver a la tienda</a>
+                <a href="#nuevo-producto" class="btn btn-add">➕ Agregar Producto</a>
+                <a href="#" class="btn btn-back">← Volver a la tienda</a>
             </div>
         </div>
         
@@ -90,13 +90,43 @@
     </footer>
 
     <script>
+        // Verificar si estamos en GitHub Pages
+        const isGitHubPages = window.location.hostname.includes('github.io');
+
         document.addEventListener('DOMContentLoaded', function() {
             const usuario = JSON.parse(sessionStorage.getItem('usuarioActual'));
             if (!usuario || usuario.rol !== 'administrador') {
-                window.location.href = '../Login/index.html';
+                redirectToLogin();
                 return;
             }
             
+            loadProducts();
+            
+            // Manejar clics en enlaces
+            document.querySelector('a[href="#nuevo-producto"]').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isGitHubPages) {
+                    window.location.href = '../index.html#nuevo-producto';
+                } else {
+                    window.location.href = '../NuevoProducto/index.html';
+                }
+            });
+            
+            document.querySelector('a[href="#logout"]').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = '../Logout/logout.html';
+            });
+        });
+
+        function redirectToLogin() {
+            if (isGitHubPages) {
+                window.location.href = '../index.html#login';
+            } else {
+                window.location.href = '../Login/index.html';
+            }
+        }
+
+        function loadProducts() {
             const productos = JSON.parse(localStorage.getItem('productos')) || [];
             const container = document.getElementById('products-list');
             
@@ -113,12 +143,12 @@
                     <p>$${producto.precio} USD</p>
                     <p>Stock: ${producto.stock}</p>
                     <div class="product-actions">
-                        <a href="../EditarProducto/index.html?id=${producto.id}" class="btn btn-edit">✏️ Editar</a>
+                        <a href="${isGitHubPages ? '../index.html#editar-producto/'+producto.id : '../EditarProducto/index.html?id='+producto.id}" class="btn btn-edit">✏️ Editar</a>
                         <button onclick="deleteProduct(${producto.id})" class="btn btn-delete">🗑️ Eliminar</button>
                     </div>
                 </div>
             `).join('');
-        });
+        }
 
         function deleteProduct(id) {
             if (confirm('¿Estás seguro de eliminar este producto?')) {
